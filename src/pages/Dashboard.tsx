@@ -51,7 +51,7 @@ export default function Dashboard() {
   console.log("Selected country:", selectedCountry);
   console.log("Selected region:", selectedRegion);
   
-  const currentData = comprehensiveMockData[selectedCountry as keyof typeof comprehensiveMockData]?.[selectedRegion as keyof any];
+  const currentData = comprehensiveMockData[selectedCountry]?.[selectedRegion];
   const availableRegions = worldCountriesData[selectedCountry]?.regions || [];
   
   // Get map location data
