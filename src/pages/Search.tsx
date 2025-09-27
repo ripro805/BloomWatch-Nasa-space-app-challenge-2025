@@ -79,10 +79,13 @@ export default function Search() {
   const [selectedRegion, setSelectedRegion] = useState("global");
 
   const handleSearch = () => {
+    console.log("Search triggered with query:", searchQuery);
     const query = searchQuery.toLowerCase();
     if (mockSearchResults[query as keyof typeof mockSearchResults]) {
+      console.log("Found results for:", query);
       setSearchResults(mockSearchResults[query as keyof typeof mockSearchResults]);
     } else {
+      console.log("No results found for:", query);
       setSearchResults(null);
     }
   };

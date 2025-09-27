@@ -155,20 +155,27 @@ function getZoneBadge(zone: string, percentage: number) {
 }
 
 export default function Dashboard() {
+  console.log("Dashboard component rendering");
+  
   const [selectedCountry, setSelectedCountry] = useState("bangladesh");
   const [selectedRegion, setSelectedRegion] = useState("dhaka");
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   
+  console.log("Selected country:", selectedCountry);
+  console.log("Selected region:", selectedRegion);
+  
   const currentData = mockLocationData[selectedCountry as keyof typeof mockLocationData]?.[selectedRegion as keyof any];
   const availableRegions = countryRegions[selectedCountry as keyof typeof countryRegions] || [];
 
   const handleUseMyLocation = () => {
+    console.log("Use my location clicked");
     setIsDetectingLocation(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          console.log("Location detected:", latitude, longitude);
           setUserLocation({ lat: latitude, lng: longitude });
           
           // Mock location detection - in real app, use reverse geocoding API
@@ -183,14 +190,20 @@ export default function Dashboard() {
         }
       );
     } else {
+      console.log("Geolocation not supported");
       setIsDetectingLocation(false);
     }
   };
 
   useEffect(() => {
+    console.log("useEffect triggered, country changed to:", selectedCountry);
+    console.log("Available regions:", availableRegions);
+    
     // Reset region when country changes
     if (availableRegions.length > 0) {
-      setSelectedRegion(availableRegions[0].toLowerCase().replace(/\s+/g, '-'));
+      const newRegion = availableRegions[0].toLowerCase().replace(/\s+/g, '-');
+      console.log("Setting new region:", newRegion);
+      setSelectedRegion(newRegion);
     }
   }, [selectedCountry]);
 
@@ -234,7 +247,13 @@ export default function Dashboard() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Country</label>
-                  <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                  <Select 
+                    value={selectedCountry} 
+                    onValueChange={(value) => {
+                      console.log("Country selection changed to:", value);
+                      setSelectedCountry(value);
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
@@ -253,7 +272,13 @@ export default function Dashboard() {
                 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Region</label>
-                  <Select value={selectedRegion} onValueChange={setSelectedRegion}>
+                  <Select 
+                    value={selectedRegion} 
+                    onValueChange={(value) => {
+                      console.log("Region selection changed to:", value);
+                      setSelectedRegion(value);
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select region" />
                     </SelectTrigger>
