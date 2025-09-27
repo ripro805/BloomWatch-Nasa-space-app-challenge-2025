@@ -4,7 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-// Removed Leaflet imports - using simplified map visualization
+import GoogleMap from "@/components/GoogleMap";
+import { worldCountriesData, comprehensiveMockData } from "@/data/countries";
 import { 
   MapPin, 
   Activity, 
@@ -17,128 +18,13 @@ import {
   Navigation as NavigationIcon
 } from "lucide-react";
 
-// Simplified map visualization without external dependencies
+// Store selected location for dashboard state
+let dashboardLocation: { country: string; region: string } | null = null;
 
-// Enhanced mock data for global location analysis
-const mockLocationData = {
-  "united-states": {
-    "california": {
-      pollinatorPercentage: 75,
-      zone: "healthy",
-      trend: "up",
-      lat: 36.7783,
-      lng: -119.4179,
-      recommendations: [
-        "Almond (Prunus dulcis) - Peak flowering in February-March",
-        "Sunflower (Helianthus annuus) - Optimal for summer planting",
-        "Strawberry (Fragaria × ananassa) - Good bee activity expected"
-      ]
-    },
-    "texas": {
-      pollinatorPercentage: 52,
-      zone: "at-risk",
-      trend: "down",
-      lat: 31.9686,
-      lng: -99.9018,
-      recommendations: [
-        "Cotton (Gossypium hirsutum) - Monitor bee populations",
-        "Watermelon (Citrullus lanatus) - Consider bee box placement",
-        "Pecan (Carya illinoinensis) - Wind pollination supplement"
-      ]
-    }
-  },
-  "bangladesh": {
-    "dhaka": {
-      pollinatorPercentage: 78,
-      zone: "healthy",
-      trend: "up",
-      lat: 23.8103,
-      lng: 90.4125,
-      recommendations: [
-        "Rice (Oryza sativa) - Peak flowering in 15 days",
-        "Jute (Corchorus capsularis) - Optimal pollination period",
-        "Mustard (Brassica rapa) - Good bee activity expected"
-      ]
-    },
-    "chittagong": {
-      pollinatorPercentage: 65,
-      zone: "healthy",
-      trend: "up",
-      lat: 22.3569,
-      lng: 91.7832,
-      recommendations: [
-        "Tea (Camellia sinensis) - Good pollinator activity",
-        "Banana (Musa acuminata) - Optimal conditions",
-        "Jackfruit (Artocarpus heterophyllus) - Peak season"
-      ]
-    }
-  },
-  "kenya": {
-    "central": {
-      pollinatorPercentage: 45,
-      zone: "at-risk",
-      trend: "down",
-      lat: -0.0236,
-      lng: 37.9062,
-      recommendations: [
-        "Coffee (Coffea arabica) - Consider bee box placement",
-        "Maize (Zea mays) - Monitor wind pollination",
-        "Bean (Phaseolus vulgaris) - Enhance native pollinator habitat"
-      ]
-    },
-    "coast": {
-      pollinatorPercentage: 38,
-      zone: "critical",
-      trend: "down",
-      lat: -3.2194,
-      lng: 40.1169,
-      recommendations: [
-        "Coconut (Cocos nucifera) - Critical pollinator shortage",
-        "Cashew (Anacardium occidentale) - Immediate intervention needed",
-        "Mango (Mangifera indica) - Enhanced bee conservation required"
-      ]
-    }
-  },
-  "brazil": {
-    "sao-paulo": {
-      pollinatorPercentage: 68,
-      zone: "healthy",
-      trend: "up",
-      lat: -23.5505,
-      lng: -46.6333,
-      recommendations: [
-        "Soybean (Glycine max) - Good pollination conditions",
-        "Orange (Citrus × sinensis) - Peak flowering season",
-        "Sugarcane (Saccharum officinarum) - Wind pollination optimal"
-      ]
-    }
-  },
-  "india": {
-    "maharashtra": {
-      pollinatorPercentage: 58,
-      zone: "at-risk",
-      trend: "stable",
-      lat: 19.7515,
-      lng: 75.7139,
-      recommendations: [
-        "Cotton (Gossypium arboreum) - Monitor bee populations",
-        "Grape (Vitis vinifera) - Support native pollinators",
-        "Onion (Allium cepa) - Enhance habitat corridors"
-      ]
-    }
-  }
-};
-
-// Countries and their regions
-const countryRegions = {
-  "united-states": ["California", "Texas", "Florida", "New York"],
-  "bangladesh": ["Dhaka", "Chittagong", "Sylhet", "Rajshahi"],
-  "kenya": ["Central", "Coast", "Rift Valley", "Eastern"],
-  "brazil": ["São Paulo", "Rio de Janeiro", "Minas Gerais", "Bahia"],
-  "india": ["Maharashtra", "Karnataka", "Tamil Nadu", "Gujarat"],
-  "canada": ["Ontario", "Quebec", "British Columbia", "Alberta"],
-  "australia": ["New South Wales", "Victoria", "Queensland", "Western Australia"],
-  "germany": ["Bavaria", "North Rhine-Westphalia", "Baden-Württemberg", "Lower Saxony"]
+// Get location data for dashboard-search integration
+export const getDashboardLocation = () => dashboardLocation;
+export const setDashboardLocation = (location: { country: string; region: string }) => {
+  dashboardLocation = location;
 };
 
 function getZoneBadge(zone: string, percentage: number) {
@@ -165,8 +51,18 @@ export default function Dashboard() {
   console.log("Selected country:", selectedCountry);
   console.log("Selected region:", selectedRegion);
   
-  const currentData = mockLocationData[selectedCountry as keyof typeof mockLocationData]?.[selectedRegion as keyof any];
-  const availableRegions = countryRegions[selectedCountry as keyof typeof countryRegions] || [];
+  const currentData = comprehensiveMockData[selectedCountry as keyof typeof comprehensiveMockData]?.[selectedRegion as keyof any];
+  const availableRegions = worldCountriesData[selectedCountry]?.regions || [];
+  
+  // Get map location data
+  const mapLocation = currentData ? {
+    country: selectedCountry,
+    region: selectedRegion,
+    lat: currentData.lat,
+    lng: currentData.lng,
+    zone: currentData.zone,
+    percentage: currentData.pollinatorPercentage
+  } : null;
 
   const handleUseMyLocation = () => {
     console.log("Use my location clicked");
@@ -205,7 +101,10 @@ export default function Dashboard() {
       console.log("Setting new region:", newRegion);
       setSelectedRegion(newRegion);
     }
-  }, [selectedCountry]);
+    
+    // Update dashboard location for search integration
+    setDashboardLocation({ country: selectedCountry, region: selectedRegion });
+  }, [selectedCountry, selectedRegion]);
 
   // Simplified zone visualization without external map dependencies
 
@@ -258,14 +157,11 @@ export default function Dashboard() {
                       <SelectValue placeholder="Select country" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="united-states">🇺🇸 United States</SelectItem>
-                      <SelectItem value="bangladesh">🇧🇩 Bangladesh</SelectItem>
-                      <SelectItem value="kenya">🇰🇪 Kenya</SelectItem>
-                      <SelectItem value="brazil">🇧🇷 Brazil</SelectItem>
-                      <SelectItem value="india">🇮🇳 India</SelectItem>
-                      <SelectItem value="canada">🇨🇦 Canada</SelectItem>
-                      <SelectItem value="australia">🇦🇺 Australia</SelectItem>
-                      <SelectItem value="germany">🇩🇪 Germany</SelectItem>
+                      {Object.entries(worldCountriesData).map(([key, country]) => (
+                        <SelectItem key={key} value={key}>
+                          {country.flag} {country.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -337,51 +233,27 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Interactive Map */}
+            {/* Interactive Google Map */}
             <Card className="lg:col-span-2 bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <MapPin className="h-5 w-5 text-primary" />
-                  <span>Regional Map</span>
+                  <span>Interactive Regional Map</span>
                 </CardTitle>
                 <CardDescription>
-                  Interactive pollination zone visualization with NASA data
+                  Google Maps integration with pollination zone visualization
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="h-64 rounded-lg overflow-hidden">
-                  {currentData ? (
-                    <div className="h-full bg-gradient-to-b from-primary/10 to-accent/10 rounded-lg flex items-center justify-center relative">
-                      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-green-500/20"></div>
-                      <div className="text-center space-y-3 z-10">
-                        <div 
-                          className="w-6 h-6 rounded-full mx-auto shadow-lg"
-                          style={{ 
-                            backgroundColor: currentData.zone === "healthy" ? "#22c55e" : 
-                                           currentData.zone === "at-risk" ? "#eab308" : "#ef4444" 
-                          }}
-                        ></div>
-                        <div>
-                          <h4 className="font-medium text-lg">{selectedRegion.charAt(0).toUpperCase() + selectedRegion.slice(1)}</h4>
-                          <p className="text-sm text-muted-foreground">{currentData.pollinatorPercentage}% Pollinator Activity</p>
-                          <div className="mt-2">
-                            {getZoneBadge(currentData.zone, currentData.pollinatorPercentage)}
-                          </div>
-                        </div>
-                        <MapPin className="h-8 w-8 text-primary mx-auto animate-pulse" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="h-full bg-gradient-to-b from-primary/10 to-accent/10 rounded-lg flex items-center justify-center">
-                      <div className="text-center space-y-2">
-                        <Satellite className="h-12 w-12 text-primary mx-auto animate-orbit" />
-                        <p className="text-muted-foreground">Select a location to view data</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <GoogleMap
+                  selectedLocation={mapLocation}
+                  onLocationChange={(location) => {
+                    console.log("Map location selected:", location);
+                    // Handle custom location selection if needed
+                  }}
+                />
                 <div className="mt-3 text-xs text-muted-foreground text-center">
-                  <p>Map powered by OpenStreetMap • Data integration requires Supabase for real-time NASA feeds</p>
+                  <p>🗺️ Interactive map • Click locations for custom analysis • Requires Google Maps API key</p>
                 </div>
               </CardContent>
             </Card>

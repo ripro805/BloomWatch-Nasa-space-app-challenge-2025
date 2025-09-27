@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/ui/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cropSearchDatabase } from "@/data/countries";
+import { getDashboardLocation } from "@/pages/Dashboard";
 import { 
   Search as SearchIcon, 
   MapPin, 
@@ -16,48 +17,7 @@ import {
   Globe
 } from "lucide-react";
 
-// Enhanced mock search results with global and local data
-const mockSearchResults = {
-  "rice": {
-    scientificName: "Oryza sativa",
-    floweringTime: "15-20 days before harvest",
-    requiredPollinators: ["Wind (primary)", "Bees (supplementary)"],
-    globalZone: { zone: "at-risk", percentage: 58 },
-    zoneData: {
-      bangladesh: { zone: "healthy", percentage: 78 },
-      india: { zone: "at-risk", percentage: 45 },
-      thailand: { zone: "healthy", percentage: 82 },
-      "united-states": { zone: "healthy", percentage: 72 },
-      vietnam: { zone: "at-risk", percentage: 52 }
-    }
-  },
-  "coffee": {
-    scientificName: "Coffea arabica",
-    floweringTime: "After rainy season (March-May)",
-    requiredPollinators: ["Honeybees", "Native bees", "Butterflies"],
-    globalZone: { zone: "critical", percentage: 42 },
-    zoneData: {
-      kenya: { zone: "at-risk", percentage: 45 },
-      ethiopia: { zone: "critical", percentage: 28 },
-      colombia: { zone: "healthy", percentage: 75 },
-      brazil: { zone: "healthy", percentage: 68 },
-      guatemala: { zone: "at-risk", percentage: 48 }
-    }
-  },
-  "sunflower": {
-    scientificName: "Helianthus annuus",
-    floweringTime: "60-90 days after planting",
-    requiredPollinators: ["Honeybees", "Bumblebees", "Solitary bees"],
-    globalZone: { zone: "healthy", percentage: 71 },
-    zoneData: {
-      ukraine: { zone: "at-risk", percentage: 52 },
-      argentina: { zone: "healthy", percentage: 88 },
-      "united-states": { zone: "healthy", percentage: 71 },
-      russia: { zone: "at-risk", percentage: 49 },
-      turkey: { zone: "healthy", percentage: 76 }
-    }
-  }
-};
+// Get comprehensive search results from database
 
 function getZoneBadge(zone: string, percentage: number) {
   switch (zone) {
@@ -75,18 +35,36 @@ function getZoneBadge(zone: string, percentage: number) {
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any>(null);
-  const [selectedCountry, setSelectedCountry] = useState("global");
-  const [selectedRegion, setSelectedRegion] = useState("global");
+  const [dashboardLocation, setDashboardLocation] = useState<{country: string, region: string} | null>(null);
+
+  // Get dashboard location on component mount and updates
+  useEffect(() => {
+    const location = getDashboardLocation();
+    setDashboardLocation(location);
+    console.log("Search using dashboard location:", location);
+  }, []);
 
   const handleSearch = () => {
     console.log("Search triggered with query:", searchQuery);
-    const query = searchQuery.toLowerCase();
-    if (mockSearchResults[query as keyof typeof mockSearchResults]) {
+    const query = searchQuery.toLowerCase().trim();
+    
+    // Search in comprehensive database
+    if (cropSearchDatabase[query as keyof typeof cropSearchDatabase]) {
       console.log("Found results for:", query);
-      setSearchResults(mockSearchResults[query as keyof typeof mockSearchResults]);
+      setSearchResults(cropSearchDatabase[query as keyof typeof cropSearchDatabase]);
     } else {
-      console.log("No results found for:", query);
-      setSearchResults(null);
+      // Try partial matching for user-friendly search
+      const partialMatch = Object.keys(cropSearchDatabase).find(key => 
+        key.includes(query) || query.includes(key)
+      );
+      
+      if (partialMatch) {
+        console.log("Found partial match:", partialMatch);
+        setSearchResults(cropSearchDatabase[partialMatch as keyof typeof cropSearchDatabase]);
+      } else {
+        console.log("No results found for:", query);
+        setSearchResults(null);
+      }
     }
   };
 
@@ -112,13 +90,13 @@ export default function Search() {
           <CardHeader>
             <CardTitle>Search Database</CardTitle>
             <CardDescription>
-              Enter crop or flower name and select location for specific analysis
+              Search any crop or flower for detailed pollination analysis based on your selected location
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex space-x-2">
               <Input
-                placeholder="e.g., Rice, Coffee, Sunflower..."
+                placeholder="e.g., Rice, Coffee, Sunflower, Wheat, Cotton, Apple..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleSearch()}
@@ -130,25 +108,17 @@ export default function Search() {
               </Button>
             </div>
             
-            {/* Location Selection for Local Analysis */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border/50">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Compare with Location</label>
-                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="global">🌍 Global Average</SelectItem>
-                    <SelectItem value="united-states">🇺🇸 United States</SelectItem>
-                    <SelectItem value="bangladesh">🇧🇩 Bangladesh</SelectItem>
-                    <SelectItem value="kenya">🇰🇪 Kenya</SelectItem>
-                    <SelectItem value="brazil">🇧🇷 Brazil</SelectItem>
-                    <SelectItem value="india">🇮🇳 India</SelectItem>
-                  </SelectContent>
-                </Select>
+            {/* Dashboard Location Integration */}
+            {dashboardLocation && (
+              <div className="bg-primary/10 p-3 rounded-lg">
+                <p className="text-sm text-muted-foreground">
+                  🎯 Search results automatically based on your selected location: 
+                  <span className="font-medium ml-1 capitalize">
+                    {dashboardLocation.region}, {dashboardLocation.country.replace('-', ' ')}
+                  </span>
+                </p>
               </div>
-            </div>
+            )}
           </CardContent>
         </Card>
 
@@ -209,24 +179,35 @@ export default function Search() {
                 </CardContent>
               </Card>
 
-              {/* Local Zone Data */}
+              {/* Local Zone Data - Dashboard Integration */}
               <Card className="bg-card/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
                     <MapPin className="h-5 w-5 text-primary" />
-                    <span>
-                      {selectedCountry === "global" ? "Regional" : "Local"} Classification
-                    </span>
+                    <span>Local Classification</span>
                   </CardTitle>
                   <CardDescription>
-                    {selectedCountry === "global" 
-                      ? "Regional breakdown by country"
-                      : `Pollination status in ${selectedCountry.replace('-', ' ')}`
+                    {dashboardLocation 
+                      ? `Pollination status in ${dashboardLocation.region}, ${dashboardLocation.country.replace('-', ' ')}`
+                      : "Regional breakdown by major locations"
                     }
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  {selectedCountry === "global" ? (
+                  {dashboardLocation && searchResults.zoneData[dashboardLocation.country] ? (
+                    <div className="text-center space-y-4">
+                      <div className="text-3xl font-bold">
+                        {searchResults.zoneData[dashboardLocation.country].percentage}%
+                      </div>
+                      {getZoneBadge(
+                        searchResults.zoneData[dashboardLocation.country].zone, 
+                        searchResults.zoneData[dashboardLocation.country].percentage
+                      )}
+                      <p className="text-sm text-muted-foreground">
+                        Local pollinator activity for {searchQuery} in your selected location
+                      </p>
+                    </div>
+                  ) : (
                     <div className="grid grid-cols-1 gap-3">
                       {Object.entries(searchResults.zoneData).slice(0, 4).map(([location, data]: [string, any]) => (
                         <div key={location} className="flex items-center justify-between p-3 bg-surface/50 rounded-lg">
@@ -234,27 +215,10 @@ export default function Search() {
                           {getZoneBadge(data.zone, data.percentage)}
                         </div>
                       ))}
-                    </div>
-                  ) : (
-                    <div className="text-center space-y-4">
-                      {searchResults.zoneData[selectedCountry] ? (
-                        <>
-                          <div className="text-3xl font-bold">
-                            {searchResults.zoneData[selectedCountry].percentage}%
-                          </div>
-                          {getZoneBadge(
-                            searchResults.zoneData[selectedCountry].zone, 
-                            searchResults.zoneData[selectedCountry].percentage
-                          )}
-                          <p className="text-sm text-muted-foreground">
-                            Local pollinator activity for {searchQuery}
-                          </p>
-                        </>
-                      ) : (
-                        <div className="text-muted-foreground">
-                          <p>No local data available for {selectedCountry.replace('-', ' ')}</p>
-                          <p className="text-xs mt-2">Connect to NASA database for regional analysis</p>
-                        </div>
+                      {!dashboardLocation && (
+                        <p className="text-xs text-muted-foreground text-center mt-2">
+                          💡 Select a location in Dashboard for personalized results
+                        </p>
                       )}
                     </div>
                   )}
@@ -330,21 +294,19 @@ export default function Search() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {["Rice", "Coffee", "Sunflower", "Mustard", "Maize", "Beans", "Tomato", "Apple"].map((crop) => (
+                {Object.keys(cropSearchDatabase).map((crop) => (
                   <Button
                     key={crop}
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      setSearchQuery(crop.toLowerCase());
-                      if (mockSearchResults[crop.toLowerCase() as keyof typeof mockSearchResults]) {
-                        setSearchResults(mockSearchResults[crop.toLowerCase() as keyof typeof mockSearchResults]);
-                      }
+                      setSearchQuery(crop);
+                      setSearchResults(cropSearchDatabase[crop as keyof typeof cropSearchDatabase]);
                     }}
                     className="justify-start"
                   >
                     <Leaf className="h-4 w-4 mr-2" />
-                    {crop}
+                    {crop.charAt(0).toUpperCase() + crop.slice(1)}
                   </Button>
                 ))}
               </div>
