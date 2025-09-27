@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Search as SearchIcon, 
   MapPin, 
@@ -11,39 +12,49 @@ import {
   Leaf,
   Download,
   Play,
-  Clock
+  Clock,
+  Globe
 } from "lucide-react";
 
-// Mock search results
+// Enhanced mock search results with global and local data
 const mockSearchResults = {
   "rice": {
     scientificName: "Oryza sativa",
     floweringTime: "15-20 days before harvest",
     requiredPollinators: ["Wind (primary)", "Bees (supplementary)"],
+    globalZone: { zone: "at-risk", percentage: 58 },
     zoneData: {
       bangladesh: { zone: "healthy", percentage: 78 },
       india: { zone: "at-risk", percentage: 45 },
-      thailand: { zone: "healthy", percentage: 82 }
+      thailand: { zone: "healthy", percentage: 82 },
+      "united-states": { zone: "healthy", percentage: 72 },
+      vietnam: { zone: "at-risk", percentage: 52 }
     }
   },
   "coffee": {
     scientificName: "Coffea arabica",
     floweringTime: "After rainy season (March-May)",
     requiredPollinators: ["Honeybees", "Native bees", "Butterflies"],
+    globalZone: { zone: "critical", percentage: 42 },
     zoneData: {
       kenya: { zone: "at-risk", percentage: 45 },
       ethiopia: { zone: "critical", percentage: 28 },
-      colombia: { zone: "healthy", percentage: 75 }
+      colombia: { zone: "healthy", percentage: 75 },
+      brazil: { zone: "healthy", percentage: 68 },
+      guatemala: { zone: "at-risk", percentage: 48 }
     }
   },
   "sunflower": {
     scientificName: "Helianthus annuus",
     floweringTime: "60-90 days after planting",
     requiredPollinators: ["Honeybees", "Bumblebees", "Solitary bees"],
+    globalZone: { zone: "healthy", percentage: 71 },
     zoneData: {
       ukraine: { zone: "at-risk", percentage: 52 },
       argentina: { zone: "healthy", percentage: 88 },
-      usa: { zone: "healthy", percentage: 71 }
+      "united-states": { zone: "healthy", percentage: 71 },
+      russia: { zone: "at-risk", percentage: 49 },
+      turkey: { zone: "healthy", percentage: 76 }
     }
   }
 };
@@ -64,7 +75,8 @@ function getZoneBadge(zone: string, percentage: number) {
 export default function Search() {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<any>(null);
-  const [selectedLocation, setSelectedLocation] = useState("global");
+  const [selectedCountry, setSelectedCountry] = useState("global");
+  const [selectedRegion, setSelectedRegion] = useState("global");
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
@@ -93,14 +105,14 @@ export default function Search() {
         </div>
 
         {/* Search Interface */}
-        <Card className="bg-card/80 backdrop-blur-sm max-w-2xl mx-auto">
+        <Card className="bg-card/80 backdrop-blur-sm max-w-4xl mx-auto">
           <CardHeader>
             <CardTitle>Search Database</CardTitle>
             <CardDescription>
-              Enter crop or flower name (try: rice, coffee, sunflower)
+              Enter crop or flower name and select location for specific analysis
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex space-x-2">
               <Input
                 placeholder="e.g., Rice, Coffee, Sunflower..."
@@ -113,6 +125,26 @@ export default function Search() {
                 <SearchIcon className="h-4 w-4 mr-2" />
                 Search
               </Button>
+            </div>
+            
+            {/* Location Selection for Local Analysis */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border/50">
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Compare with Location</label>
+                <Select value={selectedCountry} onValueChange={setSelectedCountry}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select country" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="global">🌍 Global Average</SelectItem>
+                    <SelectItem value="united-states">🇺🇸 United States</SelectItem>
+                    <SelectItem value="bangladesh">🇧🇩 Bangladesh</SelectItem>
+                    <SelectItem value="kenya">🇰🇪 Kenya</SelectItem>
+                    <SelectItem value="brazil">🇧🇷 Brazil</SelectItem>
+                    <SelectItem value="india">🇮🇳 India</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -154,28 +186,78 @@ export default function Search() {
               </CardContent>
             </Card>
 
-            {/* Global Zone Data */}
-            <Card className="bg-card/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <MapPin className="h-5 w-5 text-primary" />
-                  <span>Global Zone Classification</span>
-                </CardTitle>
-                <CardDescription>
-                  Pollination status across different regions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {Object.entries(searchResults.zoneData).map(([location, data]: [string, any]) => (
-                    <div key={location} className="p-4 bg-surface/50 rounded-lg">
-                      <h5 className="font-medium capitalize mb-2">{location}</h5>
-                      {getZoneBadge(data.zone, data.percentage)}
+            {/* Zone Classification Comparison */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Global Zone Data */}
+              <Card className="bg-card/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Globe className="h-5 w-5 text-primary" />
+                    <span>Global Classification</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Worldwide pollination status for {searchQuery}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center space-y-4">
+                  <div className="text-3xl font-bold">{searchResults.globalZone.percentage}%</div>
+                  {getZoneBadge(searchResults.globalZone.zone, searchResults.globalZone.percentage)}
+                  <p className="text-sm text-muted-foreground">Global average pollinator activity</p>
+                </CardContent>
+              </Card>
+
+              {/* Local Zone Data */}
+              <Card className="bg-card/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <MapPin className="h-5 w-5 text-primary" />
+                    <span>
+                      {selectedCountry === "global" ? "Regional" : "Local"} Classification
+                    </span>
+                  </CardTitle>
+                  <CardDescription>
+                    {selectedCountry === "global" 
+                      ? "Regional breakdown by country"
+                      : `Pollination status in ${selectedCountry.replace('-', ' ')}`
+                    }
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {selectedCountry === "global" ? (
+                    <div className="grid grid-cols-1 gap-3">
+                      {Object.entries(searchResults.zoneData).slice(0, 4).map(([location, data]: [string, any]) => (
+                        <div key={location} className="flex items-center justify-between p-3 bg-surface/50 rounded-lg">
+                          <h5 className="font-medium capitalize">{location.replace('-', ' ')}</h5>
+                          {getZoneBadge(data.zone, data.percentage)}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                  ) : (
+                    <div className="text-center space-y-4">
+                      {searchResults.zoneData[selectedCountry] ? (
+                        <>
+                          <div className="text-3xl font-bold">
+                            {searchResults.zoneData[selectedCountry].percentage}%
+                          </div>
+                          {getZoneBadge(
+                            searchResults.zoneData[selectedCountry].zone, 
+                            searchResults.zoneData[selectedCountry].percentage
+                          )}
+                          <p className="text-sm text-muted-foreground">
+                            Local pollinator activity for {searchQuery}
+                          </p>
+                        </>
+                      ) : (
+                        <div className="text-muted-foreground">
+                          <p>No local data available for {selectedCountry.replace('-', ' ')}</p>
+                          <p className="text-xs mt-2">Connect to NASA database for regional analysis</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
 
             {/* AI Solution & Downloads */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
