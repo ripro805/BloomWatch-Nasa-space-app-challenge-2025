@@ -44,7 +44,7 @@ export default function Dashboard() {
   console.log("Dashboard component rendering");
   
   const [selectedCountry, setSelectedCountry] = useState("bangladesh");
-  const [selectedRegion, setSelectedRegion] = useState("dhaka");
+  const [selectedRegion, setSelectedRegion] = useState("");
   const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null);
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   
@@ -95,15 +95,20 @@ export default function Dashboard() {
     console.log("useEffect triggered, country changed to:", selectedCountry);
     console.log("Available regions:", availableRegions);
     
-    // Reset region when country changes
-    if (availableRegions.length > 0) {
-      const newRegion = availableRegions[0].toLowerCase().replace(/\s+/g, '-');
-      console.log("Setting new region:", newRegion);
-      setSelectedRegion(newRegion);
+    // Reset region when country changes (clear selection for manual choice)
+    if (availableRegions.length > 0 && !availableRegions.some(region => 
+      region.toLowerCase().replace(/\s+/g, '-') === selectedRegion
+    )) {
+      console.log("Clearing region selection for manual choice");
+      setSelectedRegion("");
     }
-    
-    // Update dashboard location for search integration
-    setDashboardLocation({ country: selectedCountry, region: selectedRegion });
+  }, [selectedCountry, availableRegions]);
+
+  // Separate useEffect for dashboard location updates
+  useEffect(() => {
+    if (selectedCountry && selectedRegion) {
+      setDashboardLocation({ country: selectedCountry, region: selectedRegion });
+    }
   }, [selectedCountry, selectedRegion]);
 
   // Simplified zone visualization without external map dependencies
@@ -176,7 +181,7 @@ export default function Dashboard() {
                     }}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder="Select region" />
+                      <SelectValue placeholder={availableRegions.length > 0 ? "Choose your region" : "Select country first"} />
                     </SelectTrigger>
                     <SelectContent>
                       {availableRegions.map((region) => (
@@ -205,7 +210,7 @@ export default function Dashboard() {
         </Card>
 
         {/* Main Dashboard Content */}
-        {currentData && (
+        {selectedRegion && currentData && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Zone Status */}
             <Card className="bg-card/80 backdrop-blur-sm">
@@ -261,7 +266,7 @@ export default function Dashboard() {
         )}
 
         {/* Recommendations */}
-        {currentData && (
+        {selectedRegion && currentData && (
           <Card className="bg-card/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Crop & Flower Recommendations</CardTitle>
