@@ -47,9 +47,9 @@ export default function DummyMap({ selectedLocation }: DummyMapProps) {
     : null;
 
   return (
-    <div className="relative w-full h-96 bg-gradient-to-br from-blue-50/50 via-purple-50/30 to-green-50/50 dark:from-blue-950/20 dark:via-purple-950/20 dark:to-green-950/20 rounded-2xl overflow-hidden shadow-xl border border-border/50">
-      {/* Decorative gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
+    <div className="relative w-full h-96 bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl overflow-hidden shadow-lg border border-border/30">
+      {/* Subtle overlay for depth */}
+      <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent pointer-events-none" />
       
       {/* Modern Vector World Map */}
       <svg
@@ -58,98 +58,107 @@ export default function DummyMap({ selectedLocation }: DummyMapProps) {
         xmlns="http://www.w3.org/2000/svg"
         preserveAspectRatio="xMidYMid meet"
       >
-        {/* Continents with modern flat design */}
+        {/* Professional flat design gradients and filters */}
         <defs>
           <linearGradient id="mapGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity="0.1" />
-            <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0.05" />
+            <stop offset="0%" stopColor="hsl(200, 70%, 85%)" stopOpacity="0.15" />
+            <stop offset="100%" stopColor="hsl(180, 60%, 80%)" stopOpacity="0.1" />
           </linearGradient>
           
-          {/* Glow filter for selected region */}
-          <filter id="regionGlow">
-            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+          {/* Smooth glow filter for selected region */}
+          <filter id="regionGlow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
             <feMerge>
               <feMergeNode in="coloredBlur"/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
+          
+          {/* Marker glow filter */}
+          <filter id="markerGlow" x="-100%" y="-100%" width="300%" height="300%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
         </defs>
         
-        {/* Asia */}
+        {/* Asia - smooth vector paths */}
         <path 
           d="M 550 120 Q 620 100, 720 140 Q 780 170, 820 220 Q 850 280, 800 330 Q 740 370, 670 360 Q 600 350, 570 310 Q 540 260, 540 200 Q 540 150, 550 120 Z" 
           fill="url(#mapGradient)" 
-          stroke="hsl(var(--primary))" 
-          strokeWidth="1.5" 
-          opacity="0.7"
-          className={selectedLocation?.country === 'bangladesh' || selectedLocation?.country === 'india' || selectedLocation?.country === 'china' ? 'animate-pulse' : ''}
-          style={selectedLocation?.country === 'bangladesh' || selectedLocation?.country === 'india' || selectedLocation?.country === 'china' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone) } : {}}
+          stroke="hsl(200, 40%, 60%)" 
+          strokeWidth="2" 
+          opacity="0.8"
+          className={selectedLocation?.country === 'bangladesh' || selectedLocation?.country === 'india' || selectedLocation?.country === 'china' ? 'transition-all duration-500' : 'transition-all duration-300'}
+          style={selectedLocation?.country === 'bangladesh' || selectedLocation?.country === 'india' || selectedLocation?.country === 'china' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone), opacity: 0.6 } : {}}
         />
         
         {/* Europe */}
         <path 
           d="M 460 100 Q 510 85, 550 100 Q 580 120, 570 150 Q 550 180, 510 175 Q 470 165, 460 135 Z" 
           fill="url(#mapGradient)" 
-          stroke="hsl(var(--primary))" 
-          strokeWidth="1.5" 
-          opacity="0.7"
-          className={selectedLocation?.country === 'germany' || selectedLocation?.country === 'france' || selectedLocation?.country === 'uk' ? 'animate-pulse' : ''}
-          style={selectedLocation?.country === 'germany' || selectedLocation?.country === 'france' || selectedLocation?.country === 'uk' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone) } : {}}
+          stroke="hsl(200, 40%, 60%)" 
+          strokeWidth="2" 
+          opacity="0.8"
+          className={selectedLocation?.country === 'germany' || selectedLocation?.country === 'france' || selectedLocation?.country === 'uk' ? 'transition-all duration-500' : 'transition-all duration-300'}
+          style={selectedLocation?.country === 'germany' || selectedLocation?.country === 'france' || selectedLocation?.country === 'uk' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone), opacity: 0.6 } : {}}
         />
         
         {/* Africa */}
         <path 
           d="M 460 190 Q 510 175, 550 200 Q 580 240, 570 310 Q 540 370, 480 390 Q 440 385, 420 340 Q 400 270, 425 220 Z" 
           fill="url(#mapGradient)" 
-          stroke="hsl(var(--primary))" 
-          strokeWidth="1.5" 
-          opacity="0.7"
-          className={selectedLocation?.country === 'kenya' || selectedLocation?.country === 'south-africa' || selectedLocation?.country === 'nigeria' ? 'animate-pulse' : ''}
-          style={selectedLocation?.country === 'kenya' || selectedLocation?.country === 'south-africa' || selectedLocation?.country === 'nigeria' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone) } : {}}
+          stroke="hsl(200, 40%, 60%)" 
+          strokeWidth="2" 
+          opacity="0.8"
+          className={selectedLocation?.country === 'kenya' || selectedLocation?.country === 'south-africa' || selectedLocation?.country === 'nigeria' ? 'transition-all duration-500' : 'transition-all duration-300'}
+          style={selectedLocation?.country === 'kenya' || selectedLocation?.country === 'south-africa' || selectedLocation?.country === 'nigeria' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone), opacity: 0.6 } : {}}
         />
         
         {/* North America */}
         <path 
           d="M 180 100 Q 240 75, 310 90 Q 380 110, 405 160 Q 420 210, 390 250 Q 350 280, 290 270 Q 240 260, 200 230 Q 160 185, 170 135 Z" 
           fill="url(#mapGradient)" 
-          stroke="hsl(var(--primary))" 
-          strokeWidth="1.5" 
-          opacity="0.7"
-          className={selectedLocation?.country === 'usa' || selectedLocation?.country === 'canada' || selectedLocation?.country === 'mexico' ? 'animate-pulse' : ''}
-          style={selectedLocation?.country === 'usa' || selectedLocation?.country === 'canada' || selectedLocation?.country === 'mexico' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone) } : {}}
+          stroke="hsl(200, 40%, 60%)" 
+          strokeWidth="2" 
+          opacity="0.8"
+          className={selectedLocation?.country === 'usa' || selectedLocation?.country === 'canada' || selectedLocation?.country === 'mexico' ? 'transition-all duration-500' : 'transition-all duration-300'}
+          style={selectedLocation?.country === 'usa' || selectedLocation?.country === 'canada' || selectedLocation?.country === 'mexico' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone), opacity: 0.6 } : {}}
         />
         
         {/* South America */}
         <path 
           d="M 290 280 Q 330 265, 365 290 Q 385 335, 365 400 Q 335 445, 290 430 Q 260 415, 250 375 Q 240 330, 270 295 Z" 
           fill="url(#mapGradient)" 
-          stroke="hsl(var(--primary))" 
-          strokeWidth="1.5" 
-          opacity="0.7"
-          className={selectedLocation?.country === 'brazil' || selectedLocation?.country === 'argentina' ? 'animate-pulse' : ''}
-          style={selectedLocation?.country === 'brazil' || selectedLocation?.country === 'argentina' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone) } : {}}
+          stroke="hsl(200, 40%, 60%)" 
+          strokeWidth="2" 
+          opacity="0.8"
+          className={selectedLocation?.country === 'brazil' || selectedLocation?.country === 'argentina' ? 'transition-all duration-500' : 'transition-all duration-300'}
+          style={selectedLocation?.country === 'brazil' || selectedLocation?.country === 'argentina' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone), opacity: 0.6 } : {}}
         />
         
         {/* Australia */}
         <path 
           d="M 750 355 Q 800 340, 850 365 Q 870 395, 845 425 Q 805 445, 750 430 Q 720 415, 725 385 Z" 
           fill="url(#mapGradient)" 
-          stroke="hsl(var(--primary))" 
-          strokeWidth="1.5" 
-          opacity="0.7"
-          className={selectedLocation?.country === 'australia' ? 'animate-pulse' : ''}
-          style={selectedLocation?.country === 'australia' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone) } : {}}
+          stroke="hsl(200, 40%, 60%)" 
+          strokeWidth="2" 
+          opacity="0.8"
+          className={selectedLocation?.country === 'australia' ? 'transition-all duration-500' : 'transition-all duration-300'}
+          style={selectedLocation?.country === 'australia' ? { filter: 'url(#regionGlow)', fill: getGlowColor(selectedLocation.zone), opacity: 0.6 } : {}}
         />
         
-        {/* Decorative grid - subtle */}
-        <g stroke="hsl(var(--muted-foreground))" strokeWidth="0.3" opacity="0.15">
+        {/* Minimal grid lines */}
+        <g stroke="hsl(200, 30%, 70%)" strokeWidth="0.5" opacity="0.2">
           {/* Latitude lines */}
-          {[0, 125, 250, 375, 500].map(y => (
-            <line key={`lat-${y}`} x1="0" y1={y} x2="1000" y2={y} strokeDasharray="4 4" />
+          {[125, 250, 375].map(y => (
+            <line key={`lat-${y}`} x1="0" y1={y} x2="1000" y2={y} strokeDasharray="5 5" />
           ))}
           {/* Longitude lines */}
-          {[0, 250, 500, 750, 1000].map(x => (
-            <line key={`lng-${x}`} x1={x} y1="0" x2={x} y2="500" strokeDasharray="4 4" />
+          {[250, 500, 750].map(x => (
+            <line key={`lng-${x}`} x1={x} y1="0" x2={x} y2="500" strokeDasharray="5 5" />
           ))}
         </g>
       </svg>
@@ -165,79 +174,79 @@ export default function DummyMap({ selectedLocation }: DummyMapProps) {
           onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
         >
-          {/* Outer pulsing glow - continuous animation */}
+          {/* Outer pulsing glow - smooth animation */}
           <div 
-            className="absolute inset-0 rounded-full animate-ping"
+            className="absolute rounded-full"
             style={{
-              width: '40px',
-              height: '40px',
-              left: '-20px',
-              top: '-20px',
+              width: '48px',
+              height: '48px',
+              left: '-24px',
+              top: '-24px',
               backgroundColor: getZoneColor(selectedLocation.zone),
-              opacity: 0.3,
-              animationDuration: '2s',
+              opacity: 0.2,
+              animation: 'pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
             }}
           />
           
           {/* Middle glow ring */}
           <div 
-            className="absolute rounded-full"
+            className="absolute rounded-full transition-all duration-300"
             style={{
-              width: '32px',
-              height: '32px',
-              left: '-16px',
-              top: '-16px',
+              width: '36px',
+              height: '36px',
+              left: '-18px',
+              top: '-18px',
               backgroundColor: getZoneColor(selectedLocation.zone),
-              opacity: 0.2,
-              boxShadow: `0 0 20px ${getGlowColor(selectedLocation.zone)}`,
+              opacity: 0.25,
+              boxShadow: `0 0 24px ${getGlowColor(selectedLocation.zone)}`,
             }}
           />
           
-          {/* Main marker dot */}
+          {/* Main marker dot - polished and minimal */}
           <div
-            className="relative w-5 h-5 rounded-full border-3 border-white shadow-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-125"
+            className="relative w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center transition-all duration-300 group-hover:scale-110"
             style={{
               backgroundColor: getZoneColor(selectedLocation.zone),
-              boxShadow: `0 0 15px ${getGlowColor(selectedLocation.zone)}, 0 4px 10px rgba(0,0,0,0.3)`,
+              boxShadow: `0 0 20px ${getGlowColor(selectedLocation.zone)}, 0 2px 8px rgba(0,0,0,0.15)`,
             }}
           >
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
+            <div className="w-2.5 h-2.5 bg-white rounded-full opacity-90" />
           </div>
           
-          {/* Interactive Tooltip - appears on hover */}
+          {/* Clean tooltip card - appears on hover */}
           <div 
-            className={`absolute top-10 left-1/2 transform -translate-x-1/2 bg-card/95 backdrop-blur-md border border-border rounded-xl shadow-2xl p-4 min-w-[220px] z-30 transition-all duration-300 ${
-              isHovering ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'
+            className={`absolute top-12 left-1/2 transform -translate-x-1/2 bg-white dark:bg-slate-800 backdrop-blur-sm border border-gray-200 dark:border-slate-700 rounded-xl shadow-xl p-4 min-w-[240px] z-30 transition-all duration-300 ${
+              isHovering ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3 pointer-events-none'
             }`}
           >
             {/* Arrow pointer */}
             <div 
-              className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-card border-l border-t border-border rotate-45"
+              className="absolute -top-2 left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white dark:bg-slate-800 border-l border-t border-gray-200 dark:border-slate-700 rotate-45"
             />
             
             <div className="relative">
-              <h4 className="font-bold text-base mb-1 capitalize">{selectedLocation.region}</h4>
-              <p className="text-xs text-muted-foreground mb-3 uppercase tracking-wide">
+              <h4 className="font-semibold text-base mb-0.5 capitalize text-gray-900 dark:text-white">{selectedLocation.region}</h4>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 uppercase tracking-wide">
                 {selectedLocation.country.replace('-', ' ')}
               </p>
               
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-muted-foreground">Pollinator Activity</span>
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between py-1">
+                  <span className="text-sm text-gray-600 dark:text-gray-300">Pollinator Activity</span>
                   <span 
-                    className="font-bold text-lg"
+                    className="font-bold text-xl"
                     style={{ color: getZoneColor(selectedLocation.zone) }}
                   >
                     {selectedLocation.percentage}%
                   </span>
                 </div>
                 
-                <div className="pt-2 border-t border-border">
+                <div className="pt-2 border-t border-gray-200 dark:border-slate-700">
                   <span 
-                    className="inline-flex items-center px-3 py-1.5 rounded-lg text-white font-semibold text-xs uppercase tracking-wider shadow-lg"
+                    className="inline-flex items-center justify-center w-full px-3 py-2 rounded-lg text-white font-medium text-sm tracking-wide transition-all"
                     style={{ 
                       backgroundColor: getZoneColor(selectedLocation.zone),
-                      boxShadow: `0 4px 12px ${getGlowColor(selectedLocation.zone)}`
+                      boxShadow: `0 4px 16px ${getGlowColor(selectedLocation.zone)}`
                     }}
                   >
                     {selectedLocation.zone === 'healthy' && '✅ '}
