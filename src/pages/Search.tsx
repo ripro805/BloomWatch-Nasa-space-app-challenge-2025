@@ -51,7 +51,23 @@ export default function Search() {
     // Search in comprehensive database
     if (cropSearchDatabase[query as keyof typeof cropSearchDatabase]) {
       console.log("Found results for:", query);
-      setSearchResults(cropSearchDatabase[query as keyof typeof cropSearchDatabase]);
+      const results = cropSearchDatabase[query as keyof typeof cropSearchDatabase];
+      
+      // Filter results based on dashboard location if available
+      if (dashboardLocation) {
+        console.log("Filtering results for location:", dashboardLocation);
+        // Keep only the selected country's data in zoneData
+        const filteredZoneData = results.zoneData[dashboardLocation.country] 
+          ? { [dashboardLocation.country]: results.zoneData[dashboardLocation.country] }
+          : {};
+        
+        setSearchResults({
+          ...results,
+          zoneData: filteredZoneData
+        });
+      } else {
+        setSearchResults(results);
+      }
     } else {
       // Try partial matching for user-friendly search
       const partialMatch = Object.keys(cropSearchDatabase).find(key => 
@@ -60,7 +76,21 @@ export default function Search() {
       
       if (partialMatch) {
         console.log("Found partial match:", partialMatch);
-        setSearchResults(cropSearchDatabase[partialMatch as keyof typeof cropSearchDatabase]);
+        const results = cropSearchDatabase[partialMatch as keyof typeof cropSearchDatabase];
+        
+        // Filter results based on dashboard location if available
+        if (dashboardLocation) {
+          const filteredZoneData = results.zoneData[dashboardLocation.country] 
+            ? { [dashboardLocation.country]: results.zoneData[dashboardLocation.country] }
+            : {};
+          
+          setSearchResults({
+            ...results,
+            zoneData: filteredZoneData
+          });
+        } else {
+          setSearchResults(results);
+        }
       } else {
         console.log("No results found for:", query);
         setSearchResults(null);

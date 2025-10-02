@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import GoogleMap from "@/components/GoogleMap";
+import DummyMap from "@/components/DummyMap";
 import { worldCountriesData, comprehensiveMockData } from "@/data/countries";
 import { 
   MapPin, 
@@ -238,27 +238,21 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
-            {/* Interactive Google Map */}
+            {/* Regional Map Visualization */}
             <Card className="lg:col-span-2 bg-card/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
                   <MapPin className="h-5 w-5 text-primary" />
-                  <span>Interactive Regional Map</span>
+                  <span>Regional Map</span>
                 </CardTitle>
                 <CardDescription>
-                  Google Maps integration with pollination zone visualization
+                  Pollination zone visualization for selected region
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <GoogleMap
-                  selectedLocation={mapLocation}
-                  onLocationChange={(location) => {
-                    console.log("Map location selected:", location);
-                    // Handle custom location selection if needed
-                  }}
-                />
+                <DummyMap selectedLocation={mapLocation} />
                 <div className="mt-3 text-xs text-muted-foreground text-center">
-                  <p>🗺️ Interactive map • Click locations for custom analysis • Requires Google Maps API key</p>
+                  <p>🗺️ Static map visualization showing pollination zones by color (Green: Healthy, Yellow: At Risk, Red: Critical)</p>
                 </div>
               </CardContent>
             </Card>

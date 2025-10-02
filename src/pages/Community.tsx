@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   Users, 
   Camera,
@@ -16,7 +17,9 @@ import {
   User,
   Leaf,
   Image,
-  FileText
+  FileText,
+  Sprout,
+  Sun
 } from "lucide-react";
 
 // Mock community observations
@@ -29,6 +32,8 @@ const mockObservations = [
     species: "Rice (Oryza sativa)",
     pollinators: "Honeybees, Wind",
     date: "2024-01-15",
+    season: "Monsoon",
+    cropCategory: "Cereal",
     notes: "High bee activity observed during morning hours. Wind pollination dominant.",
     image: "rice-field.jpg"
   },
@@ -40,6 +45,8 @@ const mockObservations = [
     species: "Coffee (Coffea arabica)",
     pollinators: "Native bees, Butterflies",
     date: "2024-01-14",
+    season: "Spring",
+    cropCategory: "Flowering plant",
     notes: "Decreased pollinator visits compared to last season. May need intervention.",
     image: "coffee-flowers.jpg"
   },
@@ -51,6 +58,8 @@ const mockObservations = [
     species: "Sunflower (Helianthus annuus)",
     pollinators: "Honeybees, Bumblebees",
     date: "2024-01-13",
+    season: "Summer",
+    cropCategory: "Flowering plant",
     notes: "Excellent pollination activity. Perfect weather conditions.",
     image: "sunflower-bees.jpg"
   }
@@ -64,7 +73,9 @@ export default function Community() {
     coordinates: "",
     pollinators: "",
     notes: "",
-    date: new Date().toISOString().split('T')[0]
+    date: new Date().toISOString().split('T')[0],
+    season: "",
+    cropCategory: ""
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,7 +89,9 @@ export default function Community() {
       coordinates: "",
       pollinators: "",
       notes: "",
-      date: new Date().toISOString().split('T')[0]
+      date: new Date().toISOString().split('T')[0],
+      season: "",
+      cropCategory: ""
     });
   };
 
@@ -190,6 +203,47 @@ export default function Community() {
                   </div>
                 </div>
 
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="season">Season</Label>
+                    <Select 
+                      value={formData.season} 
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, season: value }))}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select season" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="spring">Spring</SelectItem>
+                        <SelectItem value="summer">Summer</SelectItem>
+                        <SelectItem value="monsoon">Monsoon</SelectItem>
+                        <SelectItem value="autumn">Autumn</SelectItem>
+                        <SelectItem value="winter">Winter</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="cropCategory">Crop Category</Label>
+                    <Select 
+                      value={formData.cropCategory} 
+                      onValueChange={(value) => setFormData(prev => ({ ...prev, cropCategory: value }))}
+                      required
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select crop type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="fruit">Fruit</SelectItem>
+                        <SelectItem value="vegetable">Vegetable</SelectItem>
+                        <SelectItem value="cereal">Cereal</SelectItem>
+                        <SelectItem value="flowering-plant">Flowering plant</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="date">Observation Date</Label>
                   <Input
@@ -280,6 +334,24 @@ export default function Community() {
                   <div>
                     <h5 className="font-medium text-sm mb-1">Pollinators</h5>
                     <p className="text-sm text-muted-foreground">{observation.pollinators}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <h5 className="font-medium text-sm mb-1 flex items-center space-x-1">
+                      <Sun className="h-4 w-4" />
+                      <span>Season</span>
+                    </h5>
+                    <p className="text-sm text-muted-foreground capitalize">{observation.season}</p>
+                  </div>
+                  
+                  <div>
+                    <h5 className="font-medium text-sm mb-1 flex items-center space-x-1">
+                      <Sprout className="h-4 w-4" />
+                      <span>Crop Category</span>
+                    </h5>
+                    <p className="text-sm text-muted-foreground capitalize">{observation.cropCategory}</p>
                   </div>
                 </div>
 
