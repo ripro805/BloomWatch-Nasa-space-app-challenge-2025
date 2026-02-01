@@ -48,5 +48,30 @@ Thumbs.db
 
 # Temporary files
 *.tmp
+
+# Confidential & Deployment Info
+*.pem
+*.key
+*.cert
+*.p12
+.railway
+railway.toml
+.netlify/
+
+# Database dumps and backups
+*.sql
+*.dump
+*.backup
+
+# API Keys and Secrets
+.env.production.local
+.env.development.local
+secrets/
+config/secrets.json
+
+# Deployment guides with sensitive info
+# (Keep example guides, ignore ones with real credentials)
+DEPLOYMENT_GUIDE_PRIVATE.md
+SETUP_PRIVATE.md
 *.temp
 .cache/

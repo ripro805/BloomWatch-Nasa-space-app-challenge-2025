@@ -2,6 +2,12 @@
 
 A full-stack web application for tracking global flowering and pollination data, built for the NASA Space Apps Challenge 2025.
 
+## 🚀 Live Demo
+
+**Frontend (Netlify):** [https://bloomwatchrp.netlify.app](https://bloomwatchrp.netlify.app)
+
+**Backend API (Railway):** Contact for API endpoint
+
 ## 🌟 Features
 
 - **Interactive Maps**: Pollinator zones visualization (Green, Yellow, Red)
