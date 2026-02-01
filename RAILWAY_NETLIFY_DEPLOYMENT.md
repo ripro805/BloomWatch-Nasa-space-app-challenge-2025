@@ -22,19 +22,39 @@
 3. Database will be created automatically
 
 ### Step 3: Get Database Connection URL
-1. Click on your PostgreSQL service
-2. Go to "Connect" tab
-3. Copy the "Postgres Connection URL":
+
+**⚠️ IMPORTANT: If your database and backend are in SEPARATE projects:**
+
+1. Go to your **PostgreSQL project** (the separate one)
+2. Click on PostgreSQL service
+3. Go to "Connect" tab
+4. Copy the **"Postgres Connection URL"**:
    ```
    postgresql://postgres:password@containers-us-west-xxx.railway.app:5432/railway
    ```
-4. **Save this URL** - you'll need it in Step 6
+5. **Save this URL** - you'll need it in Step 6
+
+**If database and backend are in SAME project:**
+- Railway will automatically provide the DATABASE_URL
+- You can still manually copy it from PostgreSQL service → Connect tab
+
+**Your Database URL Format:**
+```
+postgresql://postgres:ismWpCwPBhGitqocqjvNskKpWWlWRhGA@ballast.proxy.rlwy.net:44849/railway
+```
+(This is your actual database - save it!)
 
 ### Step 4: Add Backend Service
-1. In the same project, click "New" → "GitHub Repo"
-2. Connect your GitHub account if not already
-3. Select: `BloomWatch-Nasa-space-app-challenge-2025`
-4. Click "Deploy"
+
+**⚠️ Since your database is in a SEPARATE project:**
+
+1. Create a **NEW Railway project** for backend (or use existing backend project)
+2. Click "New" → "GitHub Repo"
+3. Connect your GitHub account if not already
+4. Select: `BloomWatch-Nasa-space-app-challenge-2025`
+5. Click "Deploy"
+
+**Note:** Backend and database being in separate projects is fine! Just make sure to copy the DATABASE_URL correctly in Step 6.
 
 ### Step 5: Configure Backend Service
 1. Click on your backend service (not database)
@@ -82,47 +102,59 @@ FRONTEND_URL=https://your-frontend-site.netlify.app
 
 **IMPORTANT: This step is required for registration to work!**
 
-#### Method 1: Using Railway CLI (Recommended)
-1. Install Railway CLI:
-   ```bash
-   npm install -g @railway/cli
-   ```
-2. Login to Railway:
-   ```bash
-   railway login
-   ```
-3. Link to your project:
-   ```bash
-   railway link
-   ```
-4. Run migration:
-   ```bash
-   railway run npm run migrate
-   ```
+**⚠️ Since your database and backend are in SEPARATE projects, you need to run migration from backend project with database URL.**
 
-#### Method 2: Using Railway Dashboard
-1. Go to backend service in Railway
-2. Click "Deployments" tab
-3. Find the latest successful deployment
-4. Click "View Logs"
-5. In the service, go to "Settings" → "Deploy"
-6. Add a **one-time deploy command**:
-   - Go to Variables tab
-   - Temporarily add: `npm run migrate && npm start` to start command
-   - After migration succeeds, change it back to: `npm start`
+#### Method 1: Temporary Start Command (Easiest!)
+1. Go to your **Backend project** in Railway
+2. Backend service → Settings → Deploy
+3. Find **"Start Command"** 
+4. **Temporarily** change it to:
+   ```
+   npm run migrate && npm start
+   ```
+5. Save and wait for redeploy
+6. Check logs for: `✅ Migration completed successfully!`
+7. **Change Start Command back to:**
+   ```
+   npm start
+   ```
+8. Save again
 
-#### Method 3: Manual Migration via Railway Shell
+#### Method 2: Using Railway CLI (if installed)
+```bash
+# Install Railway CLI
+npm install -g @railway/cli
+
+# Login
+railway login
+
+# Link to your BACKEND project (not database project!)
+railway link
+
+# Select your backend service, then run:
+railway run npm run migrate
+```
+
+#### Method 3: Add Migration to Build Process (Automatic)
 1. Backend service → Settings
-2. Look for "Service" section
-3. If available, use "Shell" or "Terminal" access
-4. Run: `npm run migrate`
+2. Find **"Build Command"**
+3. Set to:
+   ```
+   npm install && npm run migrate
+   ```
+4. This will run migration on every deploy
+5. Start command stays: `npm start`
 
 #### Verify Migration Success
 1. Check Railway deployment logs for:
    ```
+   🚀 Starting database migration...
+   📊 Creating database tables...
    ✅ Migration completed successfully!
    ```
-2. Test registration at your frontend URL
+2. Visit: `https://your-backend.up.railway.app/health`
+3. Should show: `"database": "connected"`
+4. Test registration at: https://bloomwatchrp.netlify.app/login
 
 **After migration, registration should work!**
 
