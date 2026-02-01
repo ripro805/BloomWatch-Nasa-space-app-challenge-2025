@@ -1,0 +1,169 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* BloomWatch Design System - Space & Earth Observation Theme
+All colors MUST be HSL for consistent theming.
+*/
+
+@layer base {
+  :root {
+    /* Core Space Theme Colors */
+    --background: 222 47% 11%;          /* Deep space blue */
+    --foreground: 210 40% 98%;          /* Crisp white text */
+    --surface: 222 40% 15%;             /* Elevated surfaces */
+    
+    /* Earth & Space Gradients */
+    --gradient-space: linear-gradient(135deg, 
+      hsl(222 47% 11%) 0%, 
+      hsl(230 45% 8%) 50%, 
+      hsl(240 50% 6%) 100%);
+    --gradient-earth: linear-gradient(135deg,
+      hsl(120 60% 30%) 0%,
+      hsl(200 80% 40%) 50%,
+      hsl(220 70% 15%) 100%);
+    --gradient-aurora: linear-gradient(90deg,
+      hsl(280 100% 70%) 0%,
+      hsl(200 100% 60%) 50%,
+      hsl(120 80% 50%) 100%);
+
+    /* Zone Classification Colors */
+    --zone-healthy: 142 76% 36%;       /* Green zone */
+    --zone-at-risk: 48 96% 53%;       /* Yellow zone */
+    --zone-critical: 0 84% 60%;       /* Red zone */
+    
+    /* UI Component Colors */
+    --card: 222 40% 15%;
+    --card-foreground: 210 40% 98%;
+    
+    --popover: 222 40% 15%;
+    --popover-foreground: 210 40% 98%;
+    
+    --primary: 142 76% 36%;            /* Earth green primary */
+    --primary-foreground: 210 40% 98%;
+    
+    --secondary: 222 40% 20%;          /* Elevated surface */
+    --secondary-foreground: 210 40% 98%;
+    
+    --muted: 222 30% 25%;             /* Subtle backgrounds */
+    --muted-foreground: 220 14% 71%;  /* Subdued text */
+    
+    --accent: 200 100% 60%;           /* Aurora blue accent */
+    --accent-foreground: 222 47% 11%;
+    
+    --destructive: 0 84% 60%;         /* Critical red */
+    --destructive-foreground: 210 40% 98%;
+    
+    --border: 222 30% 25%;           /* Subtle borders */
+    --input: 222 40% 18%;            /* Input backgrounds */
+    --ring: 200 100% 60%;            /* Focus rings */
+    
+    --radius: 0.75rem;               /* Rounded corners */
+    
+    /* Glow Effects */
+    --glow-primary: 0 0 20px hsl(var(--primary) / 0.5);
+    --glow-accent: 0 0 30px hsl(var(--accent) / 0.4);
+    --glow-aurora: 0 0 40px hsl(280 100% 70% / 0.3);
+    
+    /* Animations */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-glow: box-shadow 0.3s ease-in-out;
+  }
+
+  /* Optional light mode overrides - keeping minimal for space theme */
+  .light {
+    --background: 210 40% 98%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    background: var(--gradient-space);
+    min-height: 100vh;
+  }
+
+  /* Custom scrollbar for space theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent));
+    border-radius: 4px;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary));
+  }
+}
+
+@layer components {
+  /* Zone Status Indicators */
+  .zone-healthy {
+    @apply bg-green-500/20 text-green-400 border-green-500/40;
+  }
+  
+  .zone-at-risk {
+    @apply bg-yellow-500/20 text-yellow-400 border-yellow-500/40;
+  }
+  
+  .zone-critical {
+    @apply bg-red-500/20 text-red-400 border-red-500/40;
+  }
+  
+  /* Glow Effects */
+  .glow-primary {
+    box-shadow: var(--glow-primary);
+  }
+  
+  .glow-accent {
+    box-shadow: var(--glow-accent);
+  }
+  
+  .glow-aurora {
+    box-shadow: var(--glow-aurora);
+  }
+  
+  /* Orbital Animation */
+  .orbit {
+    animation: orbit 20s linear infinite;
+  }
+  
+  @keyframes orbit {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+  /* Fade In Animation */
+  .fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}

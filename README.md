@@ -1,0 +1,2 @@
+# BloomWatch Nasa space app challenge 2025
+BloomWatch is a web app for tracking global flowering and pollination data. Users can select any country and region, view interactive maps with pollinator zones (Green, Yellow, Red), get crop and flower suggestions, analyze pollinator activity, search any plant, and upload community observations. Built for the NASA Space Apps Challenge 2025 using NASA datasets and Google Maps integration.
