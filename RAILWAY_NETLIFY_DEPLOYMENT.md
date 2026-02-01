@@ -79,11 +79,52 @@ FRONTEND_URL=https://your-frontend-site.netlify.app
    ```
 
 ### Step 8: Initialize Database (Run Migrations)
-1. In Railway, go to backend service
-2. Go to "Settings" → "Networking"
-3. Copy your public domain
-4. Use Postman or browser to test: `https://your-backend.up.railway.app/health`
-5. If healthy, database is connected!
+
+**IMPORTANT: This step is required for registration to work!**
+
+#### Method 1: Using Railway CLI (Recommended)
+1. Install Railway CLI:
+   ```bash
+   npm install -g @railway/cli
+   ```
+2. Login to Railway:
+   ```bash
+   railway login
+   ```
+3. Link to your project:
+   ```bash
+   railway link
+   ```
+4. Run migration:
+   ```bash
+   railway run npm run migrate
+   ```
+
+#### Method 2: Using Railway Dashboard
+1. Go to backend service in Railway
+2. Click "Deployments" tab
+3. Find the latest successful deployment
+4. Click "View Logs"
+5. In the service, go to "Settings" → "Deploy"
+6. Add a **one-time deploy command**:
+   - Go to Variables tab
+   - Temporarily add: `npm run migrate && npm start` to start command
+   - After migration succeeds, change it back to: `npm start`
+
+#### Method 3: Manual Migration via Railway Shell
+1. Backend service → Settings
+2. Look for "Service" section
+3. If available, use "Shell" or "Terminal" access
+4. Run: `npm run migrate`
+
+#### Verify Migration Success
+1. Check Railway deployment logs for:
+   ```
+   ✅ Migration completed successfully!
+   ```
+2. Test registration at your frontend URL
+
+**After migration, registration should work!**
 
 ### Step 9: Generate Public Domain (if not auto-generated)
 1. Backend service → Settings → Networking
@@ -193,7 +234,15 @@ Expected response:
 - Make sure it ends with `/api`
 - Redeploy frontend after fixing
 
-### Issue 5: Authentication fails
+### Issue 5: Registration fails with error
+**Solution:**
+- Database tables are not created yet
+- Follow Step 8 to run database migration
+- Check Railway logs for migration success
+- Common error: "relation 'users' does not exist"
+- Fix: Run `npm run migrate` in Railway
+
+### Issue 6: Authentication fails
 **Solution:**
 - Check JWT_SECRET is set in Railway
 - Clear browser localStorage and cookies
@@ -206,6 +255,7 @@ Expected response:
 - [ ] PostgreSQL database created in Railway
 - [ ] Backend deployed with root directory set to `backend`
 - [ ] All environment variables added to Railway backend
+- [ ] **Database migration completed (npm run migrate)** ⚠️ CRITICAL
 - [ ] Backend /health endpoint returns "healthy"
 - [ ] Frontend deployed to Netlify
 - [ ] VITE_API_BASE_URL set in Netlify
