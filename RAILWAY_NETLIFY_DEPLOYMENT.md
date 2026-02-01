@@ -49,7 +49,7 @@
 3. Click "New Variable" and add these one by one:
 
 ```env
-DATABASE_URL=<PASTE_YOUR_POSTGRES_URL_FROM_STEP_3>
+DATABASE_URL=postgresql://postgres:ismWpCwPBhGitqocqjvNskKpWWlWRhGA@ballast.proxy.rlwy.net:44849/railway
 JWT_SECRET=MySecureRandomKey123!@#$%
 JWT_EXPIRES_IN=7d
 NODE_ENV=production
@@ -132,10 +132,12 @@ VITE_API_BASE_URL=https://your-backend-service.up.railway.app/api
 2. Backend service → Variables
 3. Update `FRONTEND_URL` variable:
    ```
-   FRONTEND_URL=https://your-site-name.netlify.app
+   FRONTEND_URL=https://bloomwatchrp.netlify.app
    ```
 4. This allows backend to accept requests from your frontend
 5. Backend will auto-redeploy
+
+**Your Frontend URL:** https://bloomwatchrp.netlify.app
 
 ---
 
