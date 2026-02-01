@@ -1,22 +1,16 @@
-# Welcome to your Lovable project
+# BloomWatch - Frontend
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/3b02d02a-d64a-4229-81cf-fd0dbc88b0a2
+BloomWatch is a global pollination monitoring platform built for NASA Space Apps Challenge.
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/3b02d02a-d64a-4229-81cf-fd0dbc88b0a2) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+You can clone this repo and push changes.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -62,12 +56,6 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/3b02d02a-d64a-4229-81cf-fd0dbc88b0a2) and click on Share -> Publish.
+You can deploy this project to any hosting service like Netlify, Vercel, or Railway.
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Refer to RAILWAY_NETLIFY_DEPLOYMENT.md in the root directory for deployment instructions.
