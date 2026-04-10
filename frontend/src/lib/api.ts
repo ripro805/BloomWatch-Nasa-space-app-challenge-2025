@@ -1,6 +1,10 @@
 import axios, { AxiosError } from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const fallbackApiBaseUrl = import.meta.env.PROD
+  ? 'https://bloomwatch-nasa-space-app-challenge-2025.onrender.com/api'
+  : 'http://localhost:5000/api';
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL?.trim() || fallbackApiBaseUrl;
 
 // Create axios instance
 const api = axios.create({

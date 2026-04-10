@@ -62,7 +62,7 @@ export default function Login() {
     } catch (error: any) {
       toast({
         title: "Registration failed",
-        description: error.response?.data?.message || "Please try again",
+        description: error.response?.data?.message || error.message || "Network/API error. Please try again.",
         variant: "destructive",
       });
     } finally {
