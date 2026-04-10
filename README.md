@@ -2,6 +2,12 @@
 
 NASA Space Apps Challenge 2025 project for monitoring flowering and pollinator health using community observations, weather signals, and NASA Earth data.
 
+## Live Links
+- Frontend (Live): `https://bloomwatchrp.netlify.app`
+- Backend (Live): `https://bloomwatch-nasa-space-app-challenge-2025.onrender.com`
+- Backend API Base URL: `https://bloomwatch-nasa-space-app-challenge-2025.onrender.com/api`
+- Backend Health Check: `https://bloomwatch-nasa-space-app-challenge-2025.onrender.com/health`
+
 ## Project Overview
 BloomWatch is a full-stack platform that helps communities, researchers, and growers track pollination health trends by region. It combines user-submitted field observations with external geospatial and weather data to surface actionable insights.
 

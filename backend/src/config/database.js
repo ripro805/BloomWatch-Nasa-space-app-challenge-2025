@@ -5,13 +5,21 @@ dotenv.config();
 
 const { Pool } = pg;
 
+const connectionString = process.env.DATABASE_URL || '';
+const isSecureConnectionRequired =
+  connectionString.includes('sslmode=require') ||
+  connectionString.includes('ssl=true') ||
+  connectionString.includes('neon.tech');
+
 // Database configuration with better defaults
 const poolConfig = {
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
+  connectionString,
+  ssl: isSecureConnectionRequired || process.env.NODE_ENV === 'production'
+    ? { rejectUnauthorized: false }
+    : false,
   max: parseInt(process.env.DB_POOL_MAX) || 20,
   idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT) || 30000,
-  connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT) || 2000,
+  connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT) || 10000,
 };
 
 const pool = new Pool(poolConfig);
