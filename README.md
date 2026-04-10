@@ -47,8 +47,8 @@ _Last verified from project manifests on April 2, 2026._
 
 ### Infrastructure and Delivery
 - Frontend deployment: Netlify
-- Backend deployment: Railway
-- Database: PostgreSQL (Railway/local)
+- Backend deployment: Render
+- Database: Neon PostgreSQL
 - Environment config via `.env`
 
 ## Monorepo Structure
@@ -216,8 +216,13 @@ npm start
 
 ## Deployment
 - Netlify: deploy `frontend` build output.
-- Railway: deploy `backend` service and configure environment variables.
-- Use managed PostgreSQL (Railway or external) and run migrations on release.
+- Render: deploy `backend` service (`Root Directory: backend`) and configure environment variables.
+- Use managed PostgreSQL (Neon) and run migrations on release.
+
+### Current live endpoints
+- Frontend: `https://bloomwatchrp.netlify.app`
+- Backend API base: `https://bloomwatch-nasa-space-app-challenge-2025.onrender.com/api`
+- Backend health: `https://bloomwatch-nasa-space-app-challenge-2025.onrender.com/health`
 
 Detailed guides:
 - `QUICK_DEPLOY_GUIDE.md`
@@ -246,4 +251,4 @@ Data/service inspiration and integrations:
 - Community-contributed observations
 
 ## License
-MIT (see `LICENSE` if available in your distribution).
+MIT (see `LICENSE`).
